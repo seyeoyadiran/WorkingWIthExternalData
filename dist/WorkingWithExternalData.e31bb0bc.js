@@ -12296,9 +12296,10 @@ function _initialLoad() {
           }
           throw new Error('Breed not found');
         case 6:
-          _context.next = 8;
+          console.log(response);
+          _context.next = 9;
           return response.json();
-        case 8:
+        case 9:
           breeds = _context.sent;
           _breedSelect = document.getElementById('breedSelect');
           breeds.forEach(function (breed) {
@@ -12308,20 +12309,20 @@ function _initialLoad() {
             _breedSelect.appendChild(option);
           });
           _breedSelect.addEventListener('change', breedSelectionHandler);
-          _context.next = 14;
+          _context.next = 15;
           return breedSelectionHandler();
-        case 14:
-          _context.next = 19;
+        case 15:
+          _context.next = 20;
           break;
-        case 16:
-          _context.prev = 16;
+        case 17:
+          _context.prev = 17;
           _context.t0 = _context["catch"](0);
           console.log('error');
-        case 19:
+        case 20:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 16]]);
+    }, _callee, null, [[0, 17]]);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12340,7 +12341,7 @@ initialLoad();
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
-function breedSelectionHandler() {
+function breedSelectionHandler(_x) {
   return _breedSelectionHandler.apply(this, arguments);
 }
 /**
@@ -12393,19 +12394,27 @@ function breedSelectionHandler() {
  * - You can call this function by clicking on the heart at the top right of any image.
  */
 function _breedSelectionHandler() {
-  _breedSelectionHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var cat, carousel, _infoDump, breedId, response, images;
+  _breedSelectionHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+    var carousel, _infoDump, breedId, headers, requestOptions, response, images, breedInfo, breedName, breedDescr, breedLife, breedWiki;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
-          cat = document.getElementById('cat');
+          //const cat = document.getElementById('cat');
           carousel = document.getElementById('carouselInner');
           _infoDump = document.getElementById('infoDump');
           breedId = breedSelect.value;
-          cat.style.cursor = 'wait';
+          headers = new Headers({
+            "Content-Type": "application/json",
+            'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+          });
+          requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+          };
           _context2.next = 8;
-          return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(breedId, "&limit=5"));
+          return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(breedId, "&limit=10"), requestOptions);
         case 8:
           response = _context2.sent;
           if (response.ok) {
@@ -12418,9 +12427,7 @@ function _breedSelectionHandler() {
           return response.json();
         case 13:
           images = _context2.sent;
-          console.log(images[0].url);
-
-          //cat.src = images[0].url;
+          //console.log(response)
 
           carousel.innerHTML = '';
           _infoDump.innerHTML = '';
@@ -12428,65 +12435,40 @@ function _breedSelectionHandler() {
             var imageElement = document.createElement('img');
             imageElement.src = imageInfo.url;
             imageElement.style.height = "300px";
+            imageElement.style.width = "300px";
             imageElement.alt = 'Picture of a cat';
-            //imageElement.classList.add('carousel-item')
+            // imageElement.classList.add('carousel-item')
             carousel.appendChild(imageElement);
           });
-
-          // const images = await response.json();
-
-          /*
-          cat.addEventListener("click", getNewCat);
-           async function getNewCat() {
-              cat.style.cursor = 'wait';
-              const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`);
-              if(!response.ok) throw Error('Errror ')
-              const jsonData = await response.json();
-             console.log(response)
-              cat.src = response.url;
-              cat.style.cursor = 'pointer';
-              
-          }
-           getNewCat();
-          
-          /*
-          const BreedValue = breedSelect.value;
-          console.log(BreedValue)
-           const response = fetch('https://api.thecatapi.com/v1/images/search?breed_ids={BreedValue}', {
-            headers: { 
-              'x-api-key':'API_KEY'
-            }
-          });
-           cat.addEventListener("click", getNewCat);
-           async function getNewCat() {
-            let BreedValue = breedSelect.value;
-              cat.style.cursor = 'wait';
-              const response = await fetch('https://api.thecatapi.com/v1/images/search?breed_ids=${BreedValue}')
-              const jsonData = await response.json();
-              console.log(response.url)
-             // const url = jsonData[0].url;
-              //console.log(jsonData[0].url)
-              cat.src = response.url;
-              cat.style.cursor = 'pointer';
-          }
-           getNewCat();
-           
-          */
-          _context2.next = 23;
+          console.log(images[0].breeds[0]);
+          breedInfo = images[0].breeds[0];
+          breedName = document.createElement('h2');
+          breedName.textContent = breedInfo.name;
+          breedDescr = document.createElement('p');
+          breedDescr.textContent = breedInfo.description;
+          breedLife = document.createElement('p');
+          breedLife.textContent = breedInfo.life_span;
+          breedWiki = document.createElement('p');
+          breedWiki.textContent = breedInfo.wikipedia_url;
+          _infoDump.appendChild(breedName);
+          _infoDump.appendChild(breedDescr);
+          _infoDump.appendChild(breedLife);
+          _infoDump.appendChild(breedWiki);
+          _context2.next = 36;
           break;
-        case 20:
-          _context2.prev = 20;
+        case 33:
+          _context2.prev = 33;
           _context2.t0 = _context2["catch"](0);
           console.log(error);
-        case 23:
+        case 36:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[0, 20]]);
+    }, _callee2, null, [[0, 33]]);
   }));
   return _breedSelectionHandler.apply(this, arguments);
 }
-function favourite(_x) {
+function favourite(_x2) {
   return _favourite.apply(this, arguments);
 }
 /**

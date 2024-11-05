@@ -26,6 +26,7 @@ async function initialLoad(){
       const response = await fetch('https://api.thecatapi.com/v1/breeds')
       if (!response.ok) throw new Error('Breed not found')
 
+        console.log(response)
       const breeds = await response.json();
       const breedSelect = document.getElementById('breedSelect');
 
@@ -60,24 +61,32 @@ initialLoad();
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
 
-async function breedSelectionHandler(){
+async function breedSelectionHandler(e){
   try {
-    const cat = document.getElementById('cat');
-    let carousel = document.getElementById('carouselInner')
-    
-    const infoDump = document.getElementById('infoDump')
 
-    const breedId = breedSelect.value;
     
-        cat.style.cursor = 'wait';
-        
-        const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
+    //const cat = document.getElementById('cat');
+    let carousel = document.getElementById('carouselInner')
+    const infoDump = document.getElementById('infoDump')
+    const breedId = breedSelect.value;
+
+
+    const headers = new Headers({
+      "Content-Type": "application/json",
+       'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+    }) 
+
+    var requestOptions = {
+      method: 'GET',
+      headers: headers,
+      redirect: 'follow'
+    };
+  
+    const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=10`, requestOptions);
+
         if(!response.ok) throw Error(' Not working')
         const images = await response.json();
-
-        console.log(images[0].url)
-        
-        //cat.src = images[0].url;
+        //console.log(response)
 
         carousel.innerHTML = '';
         infoDump.innerHTML = '';
@@ -86,61 +95,33 @@ async function breedSelectionHandler(){
           const imageElement = document.createElement('img');
           imageElement.src = imageInfo.url
           imageElement.style.height = "300px"
+          imageElement.style.width = "300px"
           imageElement.alt = 'Picture of a cat';
-          //imageElement.classList.add('carousel-item')
+         // imageElement.classList.add('carousel-item')
           carousel.appendChild(imageElement)
-        })
-  
-   
+        });
 
+        console.log(images[0].breeds[0]);
+        const breedInfo = images[0].breeds[0];
+        const breedName = document.createElement('h2');
+        breedName.textContent = breedInfo.name;
+      
 
-    // const images = await response.json();
+        const breedDescr = document.createElement('p');
+        breedDescr.textContent = breedInfo.description
+
+        const breedLife = document.createElement('p');
+        breedLife.textContent = breedInfo.life_span
+
+        const breedWiki = document.createElement('p');
+        breedWiki.textContent = breedInfo.wikipedia_url
+
+        infoDump.appendChild(breedName);
+        infoDump.appendChild(breedDescr);
+        infoDump.appendChild(breedLife);
+        infoDump.appendChild(breedWiki);
     
-    /*
-    cat.addEventListener("click", getNewCat);
 
-    async function getNewCat() {
-        cat.style.cursor = 'wait';
-        const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`);
-        if(!response.ok) throw Error('Errror ')
-        const jsonData = await response.json();
-       console.log(response)
-        cat.src = response.url;
-        cat.style.cursor = 'pointer';
-        
-    }
-
-    getNewCat();
-    
-
-/*
-    const BreedValue = breedSelect.value;
-    console.log(BreedValue)
-
-    const response = fetch('https://api.thecatapi.com/v1/images/search?breed_ids={BreedValue}', {
-      headers: { 
-        'x-api-key':'API_KEY'
-      }
-    });
-
-    cat.addEventListener("click", getNewCat);
-
-    async function getNewCat() {
-      let BreedValue = breedSelect.value;
-        cat.style.cursor = 'wait';
-        const response = await fetch('https://api.thecatapi.com/v1/images/search?breed_ids=${BreedValue}')
-        const jsonData = await response.json();
-        console.log(response.url)
-       // const url = jsonData[0].url;
-        //console.log(jsonData[0].url)
-        cat.src = response.url;
-        cat.style.cursor = 'pointer';
-    }
-
-    getNewCat();
-
-    
-*/
   }
   catch(e){
     console.log(error)
