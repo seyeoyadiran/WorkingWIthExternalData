@@ -12197,7 +12197,7 @@ var progressBar = document.getElementById("progressBar");
 var getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-var API_KEY = "";
+var API_KEY = "live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o";
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -12207,7 +12207,52 @@ var API_KEY = "";
  *  - Each option should display text equal to the name of the breed.
  * This function should execute immediately.
  */
-
+function initialLoad() {
+  return _initialLoad.apply(this, arguments);
+}
+function _initialLoad() {
+  _initialLoad = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+    var response, breeds, _breedSelect;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return fetch('https://api.thecatapi.com/v1/breeds');
+        case 3:
+          response = _context.sent;
+          if (response.ok) {
+            _context.next = 6;
+            break;
+          }
+          throw new Error('Failed to fetch breeds');
+        case 6:
+          _context.next = 8;
+          return response.json();
+        case 8:
+          breeds = _context.sent;
+          _breedSelect = document.getElementById('breedSelect');
+          breeds.forEach(function (breed) {
+            var option = document.createElement('option');
+            option.value = breed.id;
+            option.textContent = breed.name;
+            _breedSelect.appendChild(option);
+          });
+          _context.next = 16;
+          break;
+        case 13:
+          _context.prev = 13;
+          _context.t0 = _context["catch"](0);
+          console.log('error');
+        case 16:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[0, 13]]);
+  }));
+  return _initialLoad.apply(this, arguments);
+}
+initialLoad();
 /**
  * 2. Create an event handler for breedSelect that does the following:
  * - Retrieve information on the selected breed from the cat API using fetch().
@@ -12294,14 +12339,14 @@ function favourite(_x) {
  *   your code should account for this.
  */
 function _favourite() {
-  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(imgId) {
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) switch (_context.prev = _context.next) {
+  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(imgId) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
         case 0:
         case "end":
-          return _context.stop();
+          return _context2.stop();
       }
-    }, _callee);
+    }, _callee2);
   }));
   return _favourite.apply(this, arguments);
 }
@@ -12399,7 +12444,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62310" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53182" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
