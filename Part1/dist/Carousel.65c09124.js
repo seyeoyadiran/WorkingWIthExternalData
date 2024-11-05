@@ -12240,20 +12240,17 @@ function _initialLoad() {
             _breedSelect.appendChild(option);
           });
           _breedSelect.addEventListener('change', breedSelectionHandler);
-          _context.next = 15;
-          return breedSelectionHandler();
-        case 15:
-          _context.next = 20;
+          _context.next = 18;
           break;
-        case 17:
-          _context.prev = 17;
+        case 15:
+          _context.prev = 15;
           _context.t0 = _context["catch"](0);
           console.log('error');
-        case 20:
+        case 18:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 17]]);
+    }, _callee, null, [[0, 15]]);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12326,14 +12323,16 @@ function breedSelectionHandler(_x) {
  */
 function _breedSelectionHandler() {
   _breedSelectionHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-    var carousel, _infoDump, breedId, headers, requestOptions, response, images, breedInfo, breedName, breedDescr, breedLife, breedWiki;
+    var breedId, headers, requestOptions, response, images, breedInfo, breedName, breedDescr, breedLife, breedWiki;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
+          Carousel.clear();
+
           //const cat = document.getElementById('cat');
-          carousel = document.getElementById('carouselInner');
-          _infoDump = document.getElementById('infoDump');
+          //let carousel = document.getElementById('carouselInner')
+          //const infoDump = document.getElementById('infoDump')
           breedId = breedSelect.value;
           headers = new Headers({
             "Content-Type": "application/json",
@@ -12344,32 +12343,37 @@ function _breedSelectionHandler() {
             headers: headers,
             redirect: 'follow'
           };
-          _context2.next = 8;
+          _context2.next = 7;
           return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(breedId, "&limit=10"), requestOptions);
-        case 8:
+        case 7:
           response = _context2.sent;
           if (response.ok) {
-            _context2.next = 11;
+            _context2.next = 10;
             break;
           }
           throw Error(' Not working');
-        case 11:
-          _context2.next = 13;
+        case 10:
+          _context2.next = 12;
           return response.json();
-        case 13:
+        case 12:
           images = _context2.sent;
           //console.log(response)
 
-          carousel.innerHTML = '';
-          _infoDump.innerHTML = '';
+          ///carousel.innerHTML = '';
+          infoDump.innerHTML = '';
           images.forEach(function (imageInfo) {
             var imageElement = document.createElement('img');
             imageElement.src = imageInfo.url;
-            imageElement.style.height = "300px";
-            imageElement.style.width = "300px";
             imageElement.alt = 'Picture of a cat';
+            var imgUrl = imageInfo.url;
+            var imgId = imageInfo.id;
+            var imgAlt = "cat image ".concat(imgId);
+            var carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId);
+            Carousel.appendCarousel(carouselElement);
+            Carousel.start();
+
             // imageElement.classList.add('carousel-item')
-            carousel.appendChild(imageElement);
+            // carousel.appendChild(imageElement)
           });
           console.log(images[0].breeds[0]);
           breedInfo = images[0].breeds[0];
@@ -12381,21 +12385,21 @@ function _breedSelectionHandler() {
           breedLife.textContent = breedInfo.life_span;
           breedWiki = document.createElement('p');
           breedWiki.textContent = breedInfo.wikipedia_url;
-          _infoDump.appendChild(breedName);
-          _infoDump.appendChild(breedDescr);
-          _infoDump.appendChild(breedLife);
-          _infoDump.appendChild(breedWiki);
-          _context2.next = 36;
+          infoDump.appendChild(breedName);
+          infoDump.appendChild(breedDescr);
+          infoDump.appendChild(breedLife);
+          infoDump.appendChild(breedWiki);
+          _context2.next = 34;
           break;
-        case 33:
-          _context2.prev = 33;
+        case 31:
+          _context2.prev = 31;
           _context2.t0 = _context2["catch"](0);
           console.log(error);
-        case 36:
+        case 34:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[0, 33]]);
+    }, _callee2, null, [[0, 31]]);
   }));
   return _breedSelectionHandler.apply(this, arguments);
 }
@@ -12524,7 +12528,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55866" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64963" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

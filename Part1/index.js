@@ -38,7 +38,7 @@ async function initialLoad(){
       });
 
       breedSelect.addEventListener('change', breedSelectionHandler);
-      await breedSelectionHandler();
+  
     }
     catch(e)
     {
@@ -64,10 +64,11 @@ initialLoad();
 async function breedSelectionHandler(e){
   try {
 
+      Carousel.clear();
     
     //const cat = document.getElementById('cat');
-    let carousel = document.getElementById('carouselInner')
-    const infoDump = document.getElementById('infoDump')
+    //let carousel = document.getElementById('carouselInner')
+    //const infoDump = document.getElementById('infoDump')
     const breedId = breedSelect.value;
 
 
@@ -88,17 +89,23 @@ async function breedSelectionHandler(e){
         const images = await response.json();
         //console.log(response)
 
-        carousel.innerHTML = '';
+        ///carousel.innerHTML = '';
         infoDump.innerHTML = '';
 
         images.forEach(imageInfo => {
           const imageElement = document.createElement('img');
           imageElement.src = imageInfo.url
-          imageElement.style.height = "300px"
-          imageElement.style.width = "300px"
           imageElement.alt = 'Picture of a cat';
+          const imgUrl = imageInfo.url;
+          const imgId = imageInfo.id; 
+          const imgAlt = `cat image ${imgId}`
+          
+          const carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId); 
+          Carousel.appendCarousel(carouselElement); 
+          Carousel.start();
+
          // imageElement.classList.add('carousel-item')
-          carousel.appendChild(imageElement)
+         // carousel.appendChild(imageElement)
         });
 
         console.log(images[0].breeds[0]);
