@@ -12225,7 +12225,7 @@ function _initialLoad() {
             _context.next = 6;
             break;
           }
-          throw new Error('Failed to fetch breeds');
+          throw new Error('Breed not found');
         case 6:
           _context.next = 8;
           return response.json();
@@ -12238,17 +12238,21 @@ function _initialLoad() {
             option.textContent = breed.name;
             _breedSelect.appendChild(option);
           });
-          _context.next = 16;
+          _breedSelect.addEventListener('change', breedSelectionHandler);
+          _context.next = 14;
+          return breedSelectionHandler();
+        case 14:
+          _context.next = 19;
           break;
-        case 13:
-          _context.prev = 13;
+        case 16:
+          _context.prev = 16;
           _context.t0 = _context["catch"](0);
           console.log('error');
-        case 16:
+        case 19:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 13]]);
+    }, _callee, null, [[0, 16]]);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12267,7 +12271,9 @@ initialLoad();
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
-
+function breedSelectionHandler() {
+  return _breedSelectionHandler.apply(this, arguments);
+}
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
  */
@@ -12286,7 +12292,6 @@ initialLoad();
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
-
 /**
  * 6. Next, we'll create a progress bar to indicate the request is in progress.
  * - The progressBar element has already been created for you.
@@ -12302,7 +12307,6 @@ initialLoad();
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
-
 /**
  * 7. As a final element of progress indication, add the following to your axios interceptors:
  * - In your request interceptor, set the body element's cursor style to "progress."
@@ -12319,6 +12323,100 @@ initialLoad();
  *   you delete that favourite using the API, giving this function "toggle" functionality.
  * - You can call this function by clicking on the heart at the top right of any image.
  */
+function _breedSelectionHandler() {
+  _breedSelectionHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var cat, carousel, _infoDump, breedId, response, images;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.prev = 0;
+          cat = document.getElementById('cat');
+          carousel = document.getElementById('carouselInner');
+          _infoDump = document.getElementById('infoDump');
+          breedId = breedSelect.value;
+          cat.style.cursor = 'wait';
+          _context2.next = 8;
+          return fetch("https://api.thecatapi.com/v1/images/search?breed_ids=".concat(breedId, "&limit=5"));
+        case 8:
+          response = _context2.sent;
+          if (response.ok) {
+            _context2.next = 11;
+            break;
+          }
+          throw Error(' Not working');
+        case 11:
+          _context2.next = 13;
+          return response.json();
+        case 13:
+          images = _context2.sent;
+          console.log(images[0].url);
+
+          //cat.src = images[0].url;
+
+          carousel.innerHTML = '';
+          _infoDump.innerHTML = '';
+          images.forEach(function (imageInfo) {
+            var imageElement = document.createElement('img');
+            imageElement.src = imageInfo.url;
+            imageElement.style.height = "300px";
+            imageElement.alt = 'Picture of a cat';
+            //imageElement.classList.add('carousel-item')
+            carousel.appendChild(imageElement);
+          });
+
+          // const images = await response.json();
+
+          /*
+          cat.addEventListener("click", getNewCat);
+           async function getNewCat() {
+              cat.style.cursor = 'wait';
+              const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`);
+              if(!response.ok) throw Error('Errror ')
+              const jsonData = await response.json();
+             console.log(response)
+              cat.src = response.url;
+              cat.style.cursor = 'pointer';
+              
+          }
+           getNewCat();
+          
+          /*
+          const BreedValue = breedSelect.value;
+          console.log(BreedValue)
+           const response = fetch('https://api.thecatapi.com/v1/images/search?breed_ids={BreedValue}', {
+            headers: { 
+              'x-api-key':'API_KEY'
+            }
+          });
+           cat.addEventListener("click", getNewCat);
+           async function getNewCat() {
+            let BreedValue = breedSelect.value;
+              cat.style.cursor = 'wait';
+              const response = await fetch('https://api.thecatapi.com/v1/images/search?breed_ids=${BreedValue}')
+              const jsonData = await response.json();
+              console.log(response.url)
+             // const url = jsonData[0].url;
+              //console.log(jsonData[0].url)
+              cat.src = response.url;
+              cat.style.cursor = 'pointer';
+          }
+           getNewCat();
+           
+          */
+          _context2.next = 23;
+          break;
+        case 20:
+          _context2.prev = 20;
+          _context2.t0 = _context2["catch"](0);
+          console.log(error);
+        case 23:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2, null, [[0, 20]]);
+  }));
+  return _breedSelectionHandler.apply(this, arguments);
+}
 function favourite(_x) {
   return _favourite.apply(this, arguments);
 }
@@ -12339,14 +12437,14 @@ function favourite(_x) {
  *   your code should account for this.
  */
 function _favourite() {
-  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(imgId) {
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   }));
   return _favourite.apply(this, arguments);
 }
@@ -12444,7 +12542,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53182" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63817" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

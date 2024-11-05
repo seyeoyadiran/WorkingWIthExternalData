@@ -24,7 +24,7 @@ const API_KEY = "live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCy
 async function initialLoad(){
     try{
       const response = await fetch('https://api.thecatapi.com/v1/breeds')
-      if (!response.ok) throw new Error('Failed to fetch breeds');
+      if (!response.ok) throw new Error('Breed not found')
 
       const breeds = await response.json();
       const breedSelect = document.getElementById('breedSelect');
@@ -33,16 +33,17 @@ async function initialLoad(){
         const option = document.createElement('option');
         option.value = breed.id;
         option.textContent = breed.name;
-
         breedSelect.appendChild(option);
-      })
+      });
+
+      breedSelect.addEventListener('change', breedSelectionHandler);
+      await breedSelectionHandler();
     }
     catch(e)
     {
       console.log('error')
     }
 }
-
 initialLoad();
 /**
  * 2. Create an event handler for breedSelect that does the following:
@@ -58,6 +59,114 @@ initialLoad();
  * - Each new selection should clear, re-populate, and restart the Carousel.
  * - Add a call to this function to the end of your initialLoad function above to create the initial carousel.
  */
+
+async function breedSelectionHandler(){
+  try {
+    const cat = document.getElementById('cat');
+    let carousel = document.getElementById('carouselInner')
+    
+    const infoDump = document.getElementById('infoDump')
+
+    const breedId = breedSelect.value;
+    
+        cat.style.cursor = 'wait';
+        
+        const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=5`);
+        if(!response.ok) throw Error(' Not working')
+        const images = await response.json();
+
+        console.log(images[0].url)
+        
+        //cat.src = images[0].url;
+
+        carousel.innerHTML = '';
+        infoDump.innerHTML = '';
+
+        images.forEach(imageInfo => {
+          const imageElement = document.createElement('img');
+          imageElement.src = imageInfo.url
+          imageElement.style.height = "300px"
+          imageElement.alt = 'Picture of a cat';
+          //imageElement.classList.add('carousel-item')
+          carousel.appendChild(imageElement)
+        })
+  
+   
+
+
+    // const images = await response.json();
+    
+    /*
+    cat.addEventListener("click", getNewCat);
+
+    async function getNewCat() {
+        cat.style.cursor = 'wait';
+        const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`);
+        if(!response.ok) throw Error('Errror ')
+        const jsonData = await response.json();
+       console.log(response)
+        cat.src = response.url;
+        cat.style.cursor = 'pointer';
+        
+    }
+
+    getNewCat();
+    
+
+/*
+    const BreedValue = breedSelect.value;
+    console.log(BreedValue)
+
+    const response = fetch('https://api.thecatapi.com/v1/images/search?breed_ids={BreedValue}', {
+      headers: { 
+        'x-api-key':'API_KEY'
+      }
+    });
+
+    cat.addEventListener("click", getNewCat);
+
+    async function getNewCat() {
+      let BreedValue = breedSelect.value;
+        cat.style.cursor = 'wait';
+        const response = await fetch('https://api.thecatapi.com/v1/images/search?breed_ids=${BreedValue}')
+        const jsonData = await response.json();
+        console.log(response.url)
+       // const url = jsonData[0].url;
+        //console.log(jsonData[0].url)
+        cat.src = response.url;
+        cat.style.cursor = 'pointer';
+    }
+
+    getNewCat();
+
+    
+*/
+  }
+  catch(e){
+    console.log(error)
+  }
+    /*
+    console.log('https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=${BreedValue}&api_key=live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o')
+    fetch('https://api.thecatapi.com/v1/images/search?breed_ids={BreedValue}', {
+      headers: {
+        'x-api-key': 'API_KEY'
+      }
+    })
+    .then(response => {
+      if(!response.ok){
+        throw new Error ('Error response was not ok')
+      }
+      return response.json();
+    }).then(data => {
+      console.log("Breeds information", data)
+    })
+  } 
+  catch(e){
+     console.log('Error, try agian')
+  }
+*/
+  
+}
 
 /**
  * 3. Fork your own sandbox, creating a new one named "JavaScript Axios Lab."
