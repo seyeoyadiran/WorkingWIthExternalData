@@ -64,14 +64,14 @@ infoDump.innerHTML = ' ';
   const breedSelect = document.getElementById('breedSelect');
   const breedId = breedSelect.value;
 
-  
+  const progressBar = document.getElementById("progressBar");  
 
   
 const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}` , {
   onDownloadProgress: progressEvent => {
 
     const percentage = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
-    console.log(percentage + "%")
+    console.log("Progress Bar Percent " + percentage + "%")
 
     const progressBar = document.getElementById("progressBar");
     progressBar.style.width = percentage + "%";
@@ -316,6 +316,5 @@ async function getFavourites(imgId){
 * - Test other breeds as well. Not every breed has the same data available, so
 *   your code should account for this.
 */
-
 
 

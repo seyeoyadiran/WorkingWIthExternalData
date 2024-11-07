@@ -12268,7 +12268,7 @@ function breedSelectorHandler() {
 */
 function _breedSelectorHandler() {
   _breedSelectorHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var breedSelect, breedId, response;
+    var breedSelect, breedId, progressBar, response;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
@@ -12276,11 +12276,12 @@ function _breedSelectorHandler() {
           infoDump.innerHTML = ' ';
           breedSelect = document.getElementById('breedSelect');
           breedId = breedSelect.value;
-          _context2.next = 6;
+          progressBar = document.getElementById("progressBar");
+          _context2.next = 7;
           return _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY), {
             onDownloadProgress: function onDownloadProgress(progressEvent) {
               var percentage = Math.floor(progressEvent.loaded / progressEvent.total * 100);
-              console.log(percentage + "%");
+              console.log("Progress Bar Percent " + percentage + "%");
               var progressBar = document.getElementById("progressBar");
               progressBar.style.width = percentage + "%";
             }
@@ -12313,9 +12314,9 @@ function _breedSelectorHandler() {
           }).catch(function (err) {
             return console.log(err);
           });
-        case 6:
-          response = _context2.sent;
         case 7:
+          response = _context2.sent;
+        case 8:
         case "end":
           return _context2.stop();
       }
@@ -12612,7 +12613,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49506" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52021" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
