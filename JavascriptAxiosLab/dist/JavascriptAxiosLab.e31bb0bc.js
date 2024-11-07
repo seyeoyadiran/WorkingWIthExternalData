@@ -12309,17 +12309,18 @@ function _initialLoad() {
             _breedSelect.appendChild(option);
           });
           _breedSelect.addEventListener('change', breedSelectorHandler, updateProgress);
-          _context.next = 15;
+          getFavouritesBtn.addEventListener('click', getFavouritesBtn, Carousel.clear());
+          _context.next = 16;
           break;
-        case 12:
-          _context.prev = 12;
+        case 13:
+          _context.prev = 13;
           _context.t0 = _context["catch"](0);
           console.log(_context.t0);
-        case 15:
+        case 16:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 12]]);
+    }, _callee, null, [[0, 13]]);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12340,9 +12341,10 @@ function _breedSelectorHandler() {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           Carousel.clear();
+          infoDump.innerHTML = ' ';
           breedSelect = document.getElementById('breedSelect');
           breedId = breedSelect.value;
-          _context2.next = 5;
+          _context2.next = 6;
           return _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY), {
             onDownloadProgress: function onDownloadProgress(progressEvent) {
               var percentage = Math.floor(progressEvent.loaded / progressEvent.total * 100);
@@ -12379,9 +12381,9 @@ function _breedSelectorHandler() {
           }).catch(function (err) {
             return console.log(err);
           });
-        case 5:
-          response = _context2.sent;
         case 6:
+          response = _context2.sent;
+        case 7:
         case "end":
           return _context2.stop();
       }
@@ -12393,11 +12395,15 @@ _axios.default.interceptors.request.use(function (request) {
   console.log("Request Sent");
   var progressBar = document.getElementById("progressBar");
   progressBar.style.width = "0%";
+
+  //body element cursor to progress
+  document.body.cursor = "progress";
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
   return request;
 });
 _axios.default.interceptors.response.use(function (response) {
+  document.body.cursor = "default";
   response.config.metadata.endTime = new Date().getTime();
   response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
   console.log("Request took ".concat(response.config.metadata.durationInMS, " milliseconds."));
@@ -12439,46 +12445,14 @@ function updateProgress() {
     return console.log(res);
   });
 }
-function updatedProgress(event) {
-  var progressiveEvent = new ProgressEvent("progress", {
-    lengthComputable: true,
-    loaded: event.loaded,
-    total: event.total
-  });
-  document.dispatchEvent(progressiveEvent);
-}
-document.addEventListener("progress", function (event) {
-  console.log("Progress: ".concat(event.loaded, "/").concat(event.total));
-});
-updatedProgress();
-updateProgress();
-
-/*
-function updateProgess( ProgressEvent){
-
-  const options = {
-    responseType : 'blob',
-    onDownloadProgress: function(ProgressEvent){
-        console.log(ProgressEvent);
-    }
-
-    
-  }
-  const breedId = breedSelect.value;
-  const newZResponse = axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}`, options)
-  /*
-  onDownloadProgress: function () {
-    console.log("Hello");    // Do whatever you want with the native progress event
-  },
-
-  
-};*/
 
 /**
 * 7. As a final element of progress indication, add the following to your axios interceptors:
 * - In your request interceptor, set the body element's cursor style to "progress."
 * - In your response interceptor, remove the progress cursor style from the body element.
 */
+
+//Done look at the request and response interceptor code 
 
 /**
 * 8. To practice posting data, we'll create a system to "favourite" certain images.
@@ -12503,6 +12477,51 @@ function favourite(_x) {
 *    If that isn't in its own function, maybe it should be so you don't have to
 *    repeat yourself in this section.
 */
+function _favourite() {
+  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
+    var postRequest, rawBody, response;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.next = 2;
+          return _axios.default.post("https://api.thecatapi.com/v1/favourites?limit=20&image_id=".concat(imgId), {
+            image_id: imgId
+          }, {
+            headers: {
+              "Content-Type": "application/json",
+              'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+            }
+          });
+        case 2:
+          postRequest = _context3.sent;
+          console.log(postRequest);
+          rawBody = JSON.stringify({
+            "image_id": imgId
+          });
+          _context3.next = 7;
+          return _axios.default.get("https://api.thecatapi.com/v1/favourites?limit=20&image_id=".concat(imgId), {
+            method: 'Post',
+            headers: {
+              "Content-Type": "application/json",
+              'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+            },
+            body: rawBody
+          });
+        case 7:
+          response = _context3.sent;
+          console.log(response.data);
+          return _context3.abrupt("return", response.data);
+        case 10:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3);
+  }));
+  return _favourite.apply(this, arguments);
+}
+function getFavourites() {
+  return _getFavourites.apply(this, arguments);
+}
 /**
 * 10. Test your site, thoroughly!
 * - What happens when you try to load the Malayan breed?
@@ -12510,17 +12529,62 @@ function favourite(_x) {
 * - Test other breeds as well. Not every breed has the same data available, so
 *   your code should account for this.
 */
-function _favourite() {
-  _favourite = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(imgId) {
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+function _getFavourites() {
+  _getFavourites = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    var response, favourites;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
+          Carousel.clear();
+          _context4.next = 3;
+          return _axios.default.get("https://api.thecatapi.com/v1/favourites?limit=20&image_id=".concat(imgId), {
+            headers: {
+              "Content-Type": "application/json",
+              'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+            }
+          }.then(function (jsonData) {
+            jsonData.data.forEach(function (catObj) {
+              var imgUrl = catObj.url;
+              var imgId = catObj.id;
+              var imgAlt = "cat image ".concat(imgId);
+              var carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId);
+              Carousel.appendCarousel(carouselElement);
+              Carousel.start();
+            });
+
+            //console.log(jsonData.data)
+
+            var infoDump = document.getElementById("infoDump");
+            var breedInfo = jsonData.data[0];
+            var breedName = document.createElement('h2');
+            breedName.textContent = breedInfo.breeds[0].name;
+            var breedDescr = document.createElement('p');
+            breedDescr.textContent = breedInfo.breeds[0].description;
+            var breedLife = document.createElement('p');
+            breedLife.textContent = breedInfo.breeds[0].life_span;
+            var breedWiki = document.createElement('p');
+            breedWiki.textContent = breedInfo.breeds[0].wikipedia_url;
+            infoDump.appendChild(breedName);
+            infoDump.appendChild(breedDescr);
+            infoDump.appendChild(breedLife);
+            infoDump.appendChild(breedWiki);
+          }).catch(function (err) {
+            return console.log(err);
+          }));
+        case 3:
+          response = _context4.sent;
+          _context4.next = 6;
+          return response.json();
+        case 6:
+          favourites = _context4.sent;
+          console.log(favourites);
+        case 8:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3);
+    }, _callee4);
   }));
-  return _favourite.apply(this, arguments);
+  return _getFavourites.apply(this, arguments);
 }
 },{"./Carousel.js":"Carousel.js","axios":"node_modules/axios/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -12547,7 +12611,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61623" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53293" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

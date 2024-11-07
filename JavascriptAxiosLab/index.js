@@ -43,7 +43,7 @@ async function initialLoad(){
     })
     
     breedSelect.addEventListener('change', breedSelectorHandler , updateProgress );
-   
+    getFavouritesBtn.addEventListener('click', getFavouritesBtn , Carousel.clear())
   }
   catch(e){
     console.log(e)
@@ -55,6 +55,9 @@ initialLoad();
 
 async function breedSelectorHandler() {
 Carousel.clear();
+infoDump.innerHTML = ' ';
+
+
   const breedSelect = document.getElementById('breedSelect');
   const breedId = breedSelect.value;
 
@@ -105,11 +108,12 @@ const response = await axios.get(`https://api.thecatapi.com/v1/images/search?lim
     const breedWiki = document.createElement('p');
     breedWiki.textContent = breedInfo.breeds[0].wikipedia_url
 
-
     infoDump.appendChild(breedName);
     infoDump.appendChild(breedDescr);
     infoDump.appendChild(breedLife);
     infoDump.appendChild(breedWiki);
+
+    
 
 }).catch(err => console.log(err));
 
@@ -126,9 +130,11 @@ const response = await axios.get(`https://api.thecatapi.com/v1/images/search?lim
 axios.interceptors.request.use(request => {
   console.log("Request Sent")
 
-const progressBar = document.getElementById("progressBar");
-progressBar.style.width = "0%";
+  const progressBar = document.getElementById("progressBar");
+  progressBar.style.width = "0%";
 
+//body element cursor to progress
+  document.body.cursor = "progress";
   request.metadata = request.metadata || {};
   request.metadata.startTime = new Date().getTime();
   return request;
@@ -136,6 +142,8 @@ progressBar.style.width = "0%";
 
 axios.interceptors.response.use(
   (response) => {
+
+    document.body.cursor = "default";
       response.config.metadata.endTime = new Date().getTime();
       response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
 
@@ -185,51 +193,13 @@ axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedI
 
 }
 
-function updatedProgress(event) {
-  const progressiveEvent = new ProgressEvent("progress", {
-    lengthComputable: true,
-    loaded: event.loaded,
-    total: event.total,
-  });
-
-  document.dispatchEvent(progressiveEvent);
-}
-
-document.addEventListener("progress", (event) => {
-  console.log(`Progress: ${event.loaded}/${event.total}`);
-});
-
-updatedProgress();
-updateProgress();
-
-/*
-function updateProgess( ProgressEvent){
-
-  const options = {
-    responseType : 'blob',
-    onDownloadProgress: function(ProgressEvent){
-        console.log(ProgressEvent);
-    }
-
-    
-  }
-  const breedId = breedSelect.value;
-  const newZResponse = axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}`, options)
-  /*
-  onDownloadProgress: function () {
-    console.log("Hello");    // Do whatever you want with the native progress event
-  },
-
-  
-};*/
-
 /**
 * 7. As a final element of progress indication, add the following to your axios interceptors:
 * - In your request interceptor, set the body element's cursor style to "progress."
 * - In your response interceptor, remove the progress cursor style from the body element.
 */
 
-
+//Done look at the request and response interceptor code 
 
 /**
 * 8. To practice posting data, we'll create a system to "favourite" certain images.
@@ -244,6 +214,31 @@ function updateProgess( ProgressEvent){
 */
 export async function favourite(imgId) {
  // your code here
+
+ const postRequest = await axios.post(`https://api.thecatapi.com/v1/favourites?limit=20&image_id=${imgId}`, {image_id: imgId},{
+  headers:{
+    "Content-Type": "application/json",
+    'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+}
+ })
+
+ console.log(postRequest)
+
+ const rawBody = JSON.stringify({
+  "image_id": imgId,
+ });
+
+ const response = await axios.get(`https://api.thecatapi.com/v1/favourites?limit=20&image_id=${imgId}`,{
+      method: 'Post',
+      headers:{
+          "Content-Type": "application/json",
+          'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+      },
+      body: rawBody
+  });
+
+  console.log(response.data)
+  return response.data;
 }
 
 
@@ -257,7 +252,63 @@ export async function favourite(imgId) {
 *    repeat yourself in this section.
 */
 
+async function getFavourites(){
+  Carousel.clear();
+  const response = await axios.get(`https://api.thecatapi.com/v1/favourites?limit=20&image_id=${imgId}`,{
+    headers:{
+      "Content-Type": "application/json",
+      'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+  }
+  }
+  .then((jsonData) => {
+      jsonData.data.forEach((catObj) =>{
+          const imgUrl = catObj.url;
+          const imgId = catObj.id; 
+          const imgAlt = `cat image ${imgId}`
+          const carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId); 
+          Carousel.appendCarousel(carouselElement); 
+          Carousel.start();
+      });
+  
+  
+      //console.log(jsonData.data)
+  
+      const infoDump = document.getElementById("infoDump");
+      const breedInfo = jsonData.data[0]
+  
+   
+      const breedName = document.createElement('h2');
+      breedName.textContent = breedInfo.breeds[0].name;
+      
+  
+      const breedDescr = document.createElement('p');
+      breedDescr.textContent = breedInfo.breeds[0].description
+  
+  
+      const breedLife = document.createElement('p');
+      breedLife.textContent = breedInfo.breeds[0].life_span
+  
+  
+      const breedWiki = document.createElement('p');
+      breedWiki.textContent = breedInfo.breeds[0].wikipedia_url
+  
+      infoDump.appendChild(breedName);
+      infoDump.appendChild(breedDescr);
+      infoDump.appendChild(breedLife);
+      infoDump.appendChild(breedWiki);
+  
+      
+  
+  }).catch(err => console.log(err)));
+  
+  
 
+  
+
+  const favourites = await response.json();
+  console.log(favourites)
+
+}
 /**
 * 10. Test your site, thoroughly!
 * - What happens when you try to load the Malayan breed?
