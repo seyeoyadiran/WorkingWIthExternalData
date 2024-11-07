@@ -42,8 +42,11 @@ async function initialLoad(){
       breedSelect.appendChild(option);
     })
     
+    const getFavouritesBtn = document.getElementById("getFavouritesBtn");
+
     breedSelect.addEventListener('change', breedSelectorHandler , updateProgress );
-    getFavouritesBtn.addEventListener('click', getFavouritesBtn , Carousel.clear())
+    getFavouritesBtn.addEventListener('click', getFavourites)
+    
   }
   catch(e){
     console.log(e)
@@ -252,7 +255,7 @@ export async function favourite(imgId) {
 *    repeat yourself in this section.
 */
 
-async function getFavourites(){
+async function getFavourites(imgId){
   Carousel.clear();
   const response = await axios.get(`https://api.thecatapi.com/v1/favourites?limit=20&image_id=${imgId}`,{
     headers:{
@@ -302,9 +305,6 @@ async function getFavourites(){
   }).catch(err => console.log(err)));
   
   
-
-  
-
   const favourites = await response.json();
   console.log(favourites)
 

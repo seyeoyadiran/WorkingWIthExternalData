@@ -12285,7 +12285,7 @@ function initialLoad() {
 }
 function _initialLoad() {
   _initialLoad = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var response, breeds, _breedSelect;
+    var response, breeds, _breedSelect, _getFavouritesBtn;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
@@ -12308,19 +12308,20 @@ function _initialLoad() {
             option.text = breed.name;
             _breedSelect.appendChild(option);
           });
+          _getFavouritesBtn = document.getElementById("getFavouritesBtn");
           _breedSelect.addEventListener('change', breedSelectorHandler, updateProgress);
-          getFavouritesBtn.addEventListener('click', getFavouritesBtn, Carousel.clear());
-          _context.next = 16;
+          _getFavouritesBtn.addEventListener('click', getFavourites);
+          _context.next = 17;
           break;
-        case 13:
-          _context.prev = 13;
+        case 14:
+          _context.prev = 14;
           _context.t0 = _context["catch"](0);
           console.log(_context.t0);
-        case 16:
+        case 17:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 13]]);
+    }, _callee, null, [[0, 14]]);
   }));
   return _initialLoad.apply(this, arguments);
 }
@@ -12519,7 +12520,7 @@ function _favourite() {
   }));
   return _favourite.apply(this, arguments);
 }
-function getFavourites() {
+function getFavourites(_x2) {
   return _getFavourites.apply(this, arguments);
 }
 /**
@@ -12530,7 +12531,7 @@ function getFavourites() {
 *   your code should account for this.
 */
 function _getFavourites() {
-  _getFavourites = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+  _getFavourites = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(imgId) {
     var response, favourites;
     return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
@@ -12611,7 +12612,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53293" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49506" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
