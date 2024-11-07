@@ -42,8 +42,8 @@ async function initialLoad(){
       breedSelect.appendChild(option);
     })
     
-    breedSelect.addEventListener('change', breedSelectorHandler ,{ 
-      updateProgress });
+    breedSelect.addEventListener('change', breedSelectorHandler , updateProgress );
+   
   }
   catch(e){
     console.log(e)
@@ -54,30 +54,34 @@ initialLoad();
 
 
 async function breedSelectorHandler() {
-  Carousel.clear();
-    const breedSelect = document.getElementById('breedSelect');
-    const breedId = breedSelect.value;
+Carousel.clear();
+  const breedSelect = document.getElementById('breedSelect');
+  const breedId = breedSelect.value;
 
-  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o',
-    },
-   onDownloadProgress: updateProgress
-   /* onDownloadProgress: function(progressEvent){
-      console.log(progressEvent)    
-    }
-      */
-  })
-  .then((jsonData) => {
-      jsonData.data.forEach((catObj) =>{
-          const imgUrl = catObj.url;
-          const imgId = catObj.id; 
-          const imgAlt = `cat image ${imgId}`
-          const carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId); 
-          Carousel.appendCarousel(carouselElement); 
-          Carousel.start();
-    })
+  
+
+  
+const response = await axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}` , {
+  onDownloadProgress: progressEvent => {
+
+    const percentage = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+    console.log(percentage + "%")
+
+    const progressBar = document.getElementById("progressBar");
+    progressBar.style.width = percentage + "%";
+    
+  }
+
+})
+.then((jsonData) => {
+    jsonData.data.forEach((catObj) =>{
+        const imgUrl = catObj.url;
+        const imgId = catObj.id; 
+        const imgAlt = `cat image ${imgId}`
+        const carouselElement = Carousel.createCarouselItem(imgUrl, imgAlt, imgId); 
+        Carousel.appendCarousel(carouselElement); 
+        Carousel.start();
+    });
 
 
     //console.log(jsonData.data)
@@ -122,10 +126,6 @@ async function breedSelectorHandler() {
 axios.interceptors.request.use(request => {
   console.log("Request Sent")
 
-  /*
-*  - You need only to modify its "width" style property to align with the request progress.
-* - In your request interceptor, set the width of the progressBar element to 0%.
-  */
 const progressBar = document.getElementById("progressBar");
 progressBar.style.width = "0%";
 
@@ -170,32 +170,36 @@ axios.interceptors.response.use(
 
 function updateProgress(){
 
-  //const percentComplete = (ProgressEvent.loaded / ProgressEvent.total) * 100;
-  const progressBar = document.getElementById("progressBar");
+  //const breedSelect = document.getElementById('breedSelect');
+  const breedId = breedSelect.value;
 
-  //console.log(event.size);
-  //console.log(event.length);
-  //console.log(event.length());
-  //console.log(event.total);
-  //console.log(event.loaded);
+  const options = {
+    responseType : 'blob',
+    onDownloadProgress: function(progressEvent){
+      console.log(progressEvent)
+    }
+  }
+  
+axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}`, options).then(res=> console.log(res))
+
 
 }
-/*
-function updateProgress(ProgressEvent) {
-  const progressEvent = new ProgressEvent("progress", {
+
+function updatedProgress(event) {
+  const progressiveEvent = new ProgressEvent("progress", {
     lengthComputable: true,
-    loaded: loaded,
-    total: total,
+    loaded: event.loaded,
+    total: event.total,
   });
 
-  document.dispatchEvent(progressEvent);
+  document.dispatchEvent(progressiveEvent);
 }
 
 document.addEventListener("progress", (event) => {
   console.log(`Progress: ${event.loaded}/${event.total}`);
 });
-*/
 
+updatedProgress();
 updateProgress();
 
 /*

@@ -12239,9 +12239,7 @@ function _initialLoad() {
             option.text = breed.name;
             _breedSelect.appendChild(option);
           });
-          _breedSelect.addEventListener('change', breedSelectorHandler, {
-            updateProgress: updateProgress
-          });
+          _breedSelect.addEventListener('change', breedSelectorHandler, updateProgress);
           _context.next = 15;
           break;
         case 12:
@@ -12277,15 +12275,12 @@ function _breedSelectorHandler() {
           breedId = breedSelect.value;
           _context2.next = 5;
           return _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY), {
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
-            },
-            onDownloadProgress: updateProgress
-            /* onDownloadProgress: function(progressEvent){
-               console.log(progressEvent)    
-             }
-               */
+            onDownloadProgress: function onDownloadProgress(progressEvent) {
+              var percentage = Math.floor(progressEvent.loaded / progressEvent.total * 100);
+              console.log(percentage + "%");
+              var progressBar = document.getElementById("progressBar");
+              progressBar.style.width = percentage + "%";
+            }
           }).then(function (jsonData) {
             jsonData.data.forEach(function (catObj) {
               var imgUrl = catObj.url;
@@ -12327,11 +12322,6 @@ function _breedSelectorHandler() {
 }
 _axios.default.interceptors.request.use(function (request) {
   console.log("Request Sent");
-
-  /*
-  *  - You need only to modify its "width" style property to align with the request progress.
-  * - In your request interceptor, set the width of the progressBar element to 0%.
-  */
   var progressBar = document.getElementById("progressBar");
   progressBar.style.width = "0%";
   request.metadata = request.metadata || {};
@@ -12368,31 +12358,30 @@ _axios.default.interceptors.response.use(function (response) {
 //
 
 function updateProgress() {
-  //const percentComplete = (ProgressEvent.loaded / ProgressEvent.total) * 100;
-  var progressBar = document.getElementById("progressBar");
-
-  //console.log(event.size);
-  //console.log(event.length);
-  //console.log(event.length());
-  //console.log(event.total);
-  //console.log(event.loaded);
-}
-/*
-function updateProgress(ProgressEvent) {
-  const progressEvent = new ProgressEvent("progress", {
-    lengthComputable: true,
-    loaded: loaded,
-    total: total,
+  //const breedSelect = document.getElementById('breedSelect');
+  var breedId = breedSelect.value;
+  var options = {
+    responseType: 'blob',
+    onDownloadProgress: function onDownloadProgress(progressEvent) {
+      console.log(progressEvent);
+    }
+  };
+  _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY), options).then(function (res) {
+    return console.log(res);
   });
-
-  document.dispatchEvent(progressEvent);
 }
-
-document.addEventListener("progress", (event) => {
-  console.log(`Progress: ${event.loaded}/${event.total}`);
+function updatedProgress(event) {
+  var progressiveEvent = new ProgressEvent("progress", {
+    lengthComputable: true,
+    loaded: event.loaded,
+    total: event.total
+  });
+  document.dispatchEvent(progressiveEvent);
+}
+document.addEventListener("progress", function (event) {
+  console.log("Progress: ".concat(event.loaded, "/").concat(event.total));
 });
-*/
-
+updatedProgress();
 updateProgress();
 
 /*
@@ -12558,7 +12547,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51641" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61623" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
