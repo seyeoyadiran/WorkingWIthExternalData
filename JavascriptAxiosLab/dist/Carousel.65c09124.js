@@ -12239,7 +12239,9 @@ function _initialLoad() {
             option.text = breed.name;
             _breedSelect.appendChild(option);
           });
-          _breedSelect.addEventListener('change', breedSelectorHandler);
+          _breedSelect.addEventListener('change', breedSelectorHandler, {
+            updateProgress: updateProgress
+          });
           _context.next = 15;
           break;
         case 12:
@@ -12264,37 +12266,6 @@ function breedSelectorHandler() {
 * - Add a console.log statement to indicate when requests begin.
 * - As an added challenge, try to do this on your own without referencing the lesson material.
 */
-/**
-* 6. Next, we'll create a progress bar to indicate the request is in progress.
-* - The progressBar element has already been created for you.
-*  - You need only to modify its "width" style property to align with the request progress.
-* - In your request interceptor, set the width of the progressBar element to 0%.
-*  - This is to reset the progress with each request.
-* - Research the axios onDownloadProgress config option.
-* - Create a function "updateProgress" that receives a ProgressEvent object.
-*  - Pass this function to the axios onDownloadProgress config option in your event handler.
-* - console.log your ProgressEvent object within updateProgess, and familiarize yourself with its structure.
-*  - Update the progress of the request using the properties you are given.
-* - Note that we are not downloading a lot of data, so onDownloadProgress will likely only fire
-*   once or twice per request to this API. This is still a concept worth familiarizing yourself
-*   with for future projects.
-*/
-/**
-* 7. As a final element of progress indication, add the following to your axios interceptors:
-* - In your request interceptor, set the body element's cursor style to "progress."
-* - In your response interceptor, remove the progress cursor style from the body element.
-*/
-/**
-* 8. To practice posting data, we'll create a system to "favourite" certain images.
-* - The skeleton of this function has already been created for you.
-* - This function is used within Carousel.js to add the event listener as items are created.
-*  - This is why we use the export keyword for this function.
-* - Post to the cat API's favourites endpoint with the given ID.
-* - The API documentation gives examples of this functionality using fetch(); use Axios!
-* - Add additional logic to this function such that if the image is already favourited,
-*   you delete that favourite using the API, giving this function "toggle" functionality.
-* - You can call this function by clicking on the heart at the top right of any image.
-*/
 function _breedSelectorHandler() {
   _breedSelectorHandler = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
     var breedSelect, breedId, response;
@@ -12305,7 +12276,17 @@ function _breedSelectorHandler() {
           breedSelect = document.getElementById('breedSelect');
           breedId = breedSelect.value;
           _context2.next = 5;
-          return _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY)).then(function (jsonData) {
+          return _axios.default.get("https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=".concat(breedId, "&api_key=").concat(API_KEY), {
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': 'live_qpcWOQBtvxeDe2PFxvWBf3wOmRGMtPEFIUmeprV7DP8RKIkE94GNBjfrCyyFf93o'
+            },
+            onDownloadProgress: updateProgress
+            /* onDownloadProgress: function(progressEvent){
+               console.log(progressEvent)    
+             }
+               */
+          }).then(function (jsonData) {
             jsonData.data.forEach(function (catObj) {
               var imgUrl = catObj.url;
               var imgId = catObj.id;
@@ -12344,6 +12325,114 @@ function _breedSelectorHandler() {
   }));
   return _breedSelectorHandler.apply(this, arguments);
 }
+_axios.default.interceptors.request.use(function (request) {
+  console.log("Request Sent");
+
+  /*
+  *  - You need only to modify its "width" style property to align with the request progress.
+  * - In your request interceptor, set the width of the progressBar element to 0%.
+  */
+  var progressBar = document.getElementById("progressBar");
+  progressBar.style.width = "0%";
+  request.metadata = request.metadata || {};
+  request.metadata.startTime = new Date().getTime();
+  return request;
+});
+_axios.default.interceptors.response.use(function (response) {
+  response.config.metadata.endTime = new Date().getTime();
+  response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
+  console.log("Request took ".concat(response.config.metadata.durationInMS, " milliseconds."));
+  return response;
+}, function (error) {
+  error.config.metadata.endTime = new Date().getTime();
+  error.config.metadata.durationInMS = error.config.metadata.endTime - error.config.metadata.startTime;
+  console.log("Request took ".concat(error.config.metadata.durationInMS, " milliseconds."));
+  throw error;
+});
+
+/**
+* 6. Next, we'll create a progress bar to indicate the request is in progress.
+* - The progressBar element has already been created for you.
+*  - You need only to modify its "width" style property to align with the request progress.
+* - In your request interceptor, set the width of the progressBar element to 0%.
+*  - This is to reset the progress with each request.
+* - Research the axios onDownloadProgress config option.
+* - Create a function "updateProgress" that receives a ProgressEvent object.
+*  - Pass this function to the axios onDownloadProgress config option in your event handler.
+* - console.log your ProgressEvent object within updateProgess, and familiarize yourself with its structure.
+*  - Update the progress of the request using the properties you are given.
+* - Note that we are not downloading a lot of data, so onDownloadProgress will likely only fire
+*   once or twice per request to this API. This is still a concept worth familiarizing yourself
+*   with for future projects.
+*/
+//
+
+function updateProgress() {
+  //const percentComplete = (ProgressEvent.loaded / ProgressEvent.total) * 100;
+  var progressBar = document.getElementById("progressBar");
+
+  //console.log(event.size);
+  //console.log(event.length);
+  //console.log(event.length());
+  //console.log(event.total);
+  //console.log(event.loaded);
+}
+/*
+function updateProgress(ProgressEvent) {
+  const progressEvent = new ProgressEvent("progress", {
+    lengthComputable: true,
+    loaded: loaded,
+    total: total,
+  });
+
+  document.dispatchEvent(progressEvent);
+}
+
+document.addEventListener("progress", (event) => {
+  console.log(`Progress: ${event.loaded}/${event.total}`);
+});
+*/
+
+updateProgress();
+
+/*
+function updateProgess( ProgressEvent){
+
+  const options = {
+    responseType : 'blob',
+    onDownloadProgress: function(ProgressEvent){
+        console.log(ProgressEvent);
+    }
+
+    
+  }
+  const breedId = breedSelect.value;
+  const newZResponse = axios.get(`https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${breedId}&api_key=${API_KEY}`, options)
+  /*
+  onDownloadProgress: function () {
+    console.log("Hello");    // Do whatever you want with the native progress event
+  },
+
+  
+};*/
+
+/**
+* 7. As a final element of progress indication, add the following to your axios interceptors:
+* - In your request interceptor, set the body element's cursor style to "progress."
+* - In your response interceptor, remove the progress cursor style from the body element.
+*/
+
+/**
+* 8. To practice posting data, we'll create a system to "favourite" certain images.
+* - The skeleton of this function has already been created for you.
+* - This function is used within Carousel.js to add the event listener as items are created.
+*  - This is why we use the export keyword for this function.
+* - Post to the cat API's favourites endpoint with the given ID.
+* - The API documentation gives examples of this functionality using fetch(); use Axios!
+* - Add additional logic to this function such that if the image is already favourited,
+*   you delete that favourite using the API, giving this function "toggle" functionality.
+* - You can call this function by clicking on the heart at the top right of any image.
+*/
 function favourite(_x) {
   return _favourite.apply(this, arguments);
 }
@@ -12469,7 +12558,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58318" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51641" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
